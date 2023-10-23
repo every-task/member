@@ -1,12 +1,15 @@
 package com.playdata.member.controller;
 
+import com.playdata.config.TokenInfo;
+import com.playdata.domain.member.Request.EditInfoRequest;
+import com.playdata.domain.member.Request.EditPassRequest;
 import com.playdata.domain.member.Request.LoginRequest;
 import com.playdata.domain.member.Request.SignupRequest;
-import com.playdata.domain.member.entity.Member;
 import com.playdata.domain.member.response.LoginResponse;
 import com.playdata.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,5 +29,18 @@ public class MemberController {
     public LoginResponse login(@RequestBody LoginRequest loginRequest){
         return memberService.login(loginRequest);
     // 이후 토큰으로 줄 예정.
+    }
+
+    @PutMapping("/me/info")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void editInfo(@AuthenticationPrincipal TokenInfo tokenInfo,
+                         @RequestBody EditInfoRequest editInfoRequest){
+         memberService.editInfo(tokenInfo, editInfoRequest);
+    }
+    @PutMapping("/me/password")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public void editPass(@AuthenticationPrincipal TokenInfo tokenInfo,
+                         @RequestBody EditPassRequest editPassRequest){
+        memberService.editPass(tokenInfo,editPassRequest);
     }
 }

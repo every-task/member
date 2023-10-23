@@ -1,6 +1,7 @@
 package com.playdata.domain.member.entity;
 
 import com.playdata.config.BaseEntity;
+import com.playdata.domain.member.Request.EditInfoRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,5 +27,15 @@ public class Member extends BaseEntity {
         this.password = password;
         this.nickname = nickname;
         this.profileImageUrl = profileImageUrl;
+    }
+
+    public void edit(EditInfoRequest editInfoRequest){
+        this.nickname = editInfoRequest.getNickname();
+        this.profileImageUrl = editInfoRequest.getProfileImageUrl();
+
+    }
+
+    public void editPass(String password){
+        this.password = password;
     }
 }

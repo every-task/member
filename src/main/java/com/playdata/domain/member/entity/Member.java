@@ -2,10 +2,7 @@ package com.playdata.domain.member.entity;
 
 import com.playdata.config.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.UUID;
 
@@ -13,7 +10,7 @@ import java.util.UUID;
 @Table(name = "member")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
+
 public class Member extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -22,4 +19,12 @@ public class Member extends BaseEntity {
     private String password;
     private String nickname;
     private String profileImageUrl;
+
+    @Builder
+    public Member(String email, String password, String nickname, String profileImageUrl) {
+        this.email = email;
+        this.password = password;
+        this.nickname = nickname;
+        this.profileImageUrl = profileImageUrl;
+    }
 }

@@ -12,6 +12,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 public class ApplicationConfig {
 
+    private final JwtService jwtService;
+
     private int strength = 10;
     // 이것도 환경설정으로 보내버려야함.
 
@@ -26,6 +28,7 @@ public class ApplicationConfig {
                 = new DaoAuthenticationProvider();
 
         authenticationProvider.setPasswordEncoder(passwordEncoder());
+        authenticationProvider.setUserDetailsService(jwtService::parseToken);
 
         return authenticationProvider;
     }

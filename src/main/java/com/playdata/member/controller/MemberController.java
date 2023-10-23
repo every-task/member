@@ -1,7 +1,9 @@
-package com.playdata.controller;
+package com.playdata.member.controller;
 
+import com.playdata.domain.member.Request.LoginRequest;
 import com.playdata.domain.member.Request.SignupRequest;
-import com.playdata.service.MemberService;
+import com.playdata.domain.member.entity.Member;
+import com.playdata.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -16,5 +18,12 @@ public class MemberController {
     @ResponseStatus(HttpStatus.CREATED)
     public void signup(@RequestBody SignupRequest signupRequest){
         memberService.signup(signupRequest);
+    }
+
+    @PostMapping("/login")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public Member login(@RequestBody LoginRequest loginRequest){
+        return memberService.login(loginRequest);
+    // 이후 토큰으로 줄 예정.
     }
 }

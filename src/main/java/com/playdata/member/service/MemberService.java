@@ -7,8 +7,10 @@ import com.playdata.domain.member.Request.EditPassRequest;
 import com.playdata.domain.member.Request.LoginRequest;
 import com.playdata.domain.member.Request.SignupRequest;
 import com.playdata.domain.member.entity.Member;
+import com.playdata.domain.member.kafka.MemberKafka;
 import com.playdata.domain.member.repository.MemberRepository;
 import com.playdata.domain.member.response.LoginResponse;
+import com.playdata.kafka.TopicCommandProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,8 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final TopicCommandProducer topicCommandProducer;
+
 
     public void signup(SignupRequest signupRequest){
         Member byEmail = findByEmail(signupRequest.getEmail());
@@ -38,6 +42,15 @@ public class MemberService {
                 .build();
 
         memberRepository.save(member);
+
+        MemberKafka memberKafka = MemberKafka.builder()
+                .id(member.getId())
+                .profileImageUrl(member.getProfileImageUrl())
+                .nickname(member.getNickname())
+                .build();
+
+        topicCommandProducer.sendMember(memberKafka);
+
     }
 
     public LoginResponse login(LoginRequest loginRequest){

@@ -16,7 +16,7 @@ public class FirebaseController {
 
     private final FirebaseService firebaseService;
 
-    @GetMapping()
+    @GetMapping
     public String publishToken(@AuthenticationPrincipal TokenInfo tokenInfo) {
         return firebaseService.publishToken(tokenInfo);
     }

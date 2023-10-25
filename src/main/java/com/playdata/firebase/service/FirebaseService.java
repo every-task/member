@@ -2,6 +2,7 @@ package com.playdata.firebase.service;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
+import com.playdata.config.TokenInfo;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -11,9 +12,9 @@ public class FirebaseService {
 
 
 
-    public String publishToken()  {
+    public String publishToken(TokenInfo tokenInfo)  {
 
-        String uid = UUID.randomUUID().toString();
+        String uid = tokenInfo.getId().toString();
 
         try {
             return FirebaseAuth.getInstance().createCustomToken(uid);

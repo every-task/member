@@ -3,6 +3,7 @@ package com.playdata.firebase.service;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.playdata.config.TokenInfo;
+import com.playdata.domain.member.exception.FirebaseException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,7 +18,7 @@ public class FirebaseService {
         try {
             return FirebaseAuth.getInstance().createCustomToken(id);
         }catch (FirebaseAuthException e){
-            throw new RuntimeException("다시 시도해주세요.");
+            throw new FirebaseException(" error - 연결이 불안정합니다. ",e);
         }
 
 

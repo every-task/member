@@ -1,9 +1,13 @@
 package com.playdata.kafka;
 
+import com.playdata.domain.member.exception.KafkaCommandException;
 import com.playdata.domain.member.kafka.MemberKafka;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.CompletableFuture;
 
 
 @RequiredArgsConstructor
@@ -12,7 +16,15 @@ public class TopicCommandProducer {
 
     private final KafkaTemplate<String, MemberKafka> template;
     public void sendMember(MemberKafka member){
-        template.send("member", member);
+        CompletableFuture<SendResult<String, MemberKafka>> future = template.send("member", member);
+
+
+        if(future.isCompletedExceptionally() || future.isCancelled()){
+            throw new KafkaCommandException("발행 실패");
+        }
+
+
+
     }
 
 }

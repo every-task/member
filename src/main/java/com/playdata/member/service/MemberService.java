@@ -32,9 +32,9 @@ public class MemberService {
 
     @Transactional
     public void signup(SignupRequest signupRequest){
-        Member byEmail = memberRepository.findByEmail(signupRequest.getEmail()).orElse(null);
+        boolean nonExistent = memberRepository.findByEmail(signupRequest.getEmail()).isEmpty();
 
-        if(byEmail != null){
+        if(nonExistent){
             throw new ExistEmailException("이미 가입된 이메일 입니다.");
         }
 
@@ -60,7 +60,7 @@ public class MemberService {
     public LoginResponse login(LoginRequest loginRequest){
         Member member = findByEmail(loginRequest.getEmail());
 
-        if(!passwordEncoder.matches(loginRequest.getPassword(), member.getPassword())){
+        if(isMissMatch(loginRequest, member)){
             throw new LoginFailException("아이디 혹은 비밀번호가 틀렸습니다.");
         }
 
@@ -101,6 +101,11 @@ public class MemberService {
     public Member findByEmail(String email){
        return memberRepository.findByEmail(email).
                orElseThrow(() -> new LoginFailException("이메일 혹은 비밀번호가 틀렸습니다."));
+    }
+
+
+    private boolean isMissMatch(LoginRequest loginRequest, Member member) {
+        return !passwordEncoder.matches(loginRequest.getPassword(), member.getPassword());
     }
 
 

@@ -11,6 +11,7 @@ import com.playdata.domain.member.exception.ExistEmailException;
 import com.playdata.domain.member.exception.LoginFailException;
 import com.playdata.domain.member.kafka.MemberKafka;
 import com.playdata.domain.member.repository.MemberRepository;
+import com.playdata.domain.member.response.InfoResponse;
 import com.playdata.domain.member.response.LoginResponse;
 import com.playdata.kafka.TopicCommandProducer;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +29,8 @@ public class MemberService {
     private final TopicCommandProducer topicCommandProducer;
 
 
+
+    @Transactional
     public void signup(SignupRequest signupRequest){
         Member byEmail = memberRepository.findByEmail(signupRequest.getEmail()).orElse(null);
 
@@ -64,6 +67,11 @@ public class MemberService {
         String token = jwtService.makeToken(member);
         return new LoginResponse(token);
 
+    }
+
+    public InfoResponse getInfo(TokenInfo tokenInfo){
+
+        return new InfoResponse(findByEmail(tokenInfo.getEmail()));
     }
 
     @Transactional

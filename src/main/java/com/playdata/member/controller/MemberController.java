@@ -5,6 +5,7 @@ import com.playdata.domain.member.Request.EditInfoRequest;
 import com.playdata.domain.member.Request.EditPassRequest;
 import com.playdata.domain.member.Request.LoginRequest;
 import com.playdata.domain.member.Request.SignupRequest;
+import com.playdata.domain.member.response.InfoResponse;
 import com.playdata.domain.member.response.LoginResponse;
 import com.playdata.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -25,20 +26,26 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseStatus(HttpStatus.OK)
     public LoginResponse login(@RequestBody LoginRequest loginRequest){
         return memberService.login(loginRequest);
     // 이후 토큰으로 줄 예정.
     }
 
-    @PutMapping("/me/info")
+    @GetMapping("me/info")
     @ResponseStatus(HttpStatus.ACCEPTED)
+    public InfoResponse getInfo(@AuthenticationPrincipal TokenInfo tokenInfo){
+        return memberService.getInfo(tokenInfo);
+    }
+
+    @PutMapping("/me/info")
+    @ResponseStatus(HttpStatus.OK)
     public void editInfo(@AuthenticationPrincipal TokenInfo tokenInfo,
                          @RequestBody EditInfoRequest editInfoRequest){
          memberService.editInfo(tokenInfo, editInfoRequest);
     }
     @PutMapping("/me/password")
-    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseStatus(HttpStatus.OK)
     public void editPass(@AuthenticationPrincipal TokenInfo tokenInfo,
                          @RequestBody EditPassRequest editPassRequest){
         memberService.editPass(tokenInfo,editPassRequest);

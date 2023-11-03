@@ -11,6 +11,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -30,10 +33,23 @@ public class SecurityConfig {
         security.authenticationProvider(authenticationProvider);
         security.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
+        security.cors(corsCustomizer -> corsCustomizer.configurationSource(request -> {
+            CorsConfiguration config = new CorsConfiguration();
+            config.setAllowedOrigins(Collections.singletonList("http://104.154.101.83:80")); // yml로 빼야함
+            config.setAllowedMethods(Collections.singletonList("*"));
+            config.setAllowCredentials(true);
+            config.setAllowedHeaders(Collections.singletonList("*"));
+            config.setMaxAge(3600L); //1시간
+
+
+            return config;
+        }));
+
         security.authorizeHttpRequests(req ->
                 req.requestMatchers(
                                 AntPathRequestMatcher.antMatcher("/api/v1/member/login")
                                 , AntPathRequestMatcher.antMatcher("/api/v1/member/signup")
+                        ,   AntPathRequestMatcher.antMatcher("/api/v1/token/welcome")
                         )
                         .permitAll()
                         .anyRequest().authenticated()

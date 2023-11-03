@@ -1,0 +1,19 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:mysql://10.128.0.12:3306/member?serverTimezone=Asia/Seoul
+    username: ity
+    password: 1234
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+
+  kafka:
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    bootstrap-servers: 10.128.0.12:9092

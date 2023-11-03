@@ -8,16 +8,21 @@ import com.playdata.domain.member.Request.LoginRequest;
 import com.playdata.domain.member.Request.SignupRequest;
 import com.playdata.domain.member.entity.Member;
 import com.playdata.domain.member.exception.ExistEmailException;
+import com.playdata.domain.member.exception.IncorrectContactException;
 import com.playdata.domain.member.exception.LoginFailException;
 import com.playdata.domain.member.kafka.MemberKafka;
 import com.playdata.domain.member.repository.MemberRepository;
 import com.playdata.domain.member.response.InfoResponse;
 import com.playdata.domain.member.response.LoginResponse;
 import com.playdata.kafka.TopicCommandProducer;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -32,10 +37,10 @@ public class MemberService {
 
     @Transactional
     public void signup(SignupRequest signupRequest){
-        boolean nonExistent = memberRepository.findByEmail(signupRequest.getEmail()).isEmpty();
+        boolean existent = memberRepository.findByEmail(signupRequest.getEmail()).isPresent();
 
-        if(nonExistent){
-            throw new ExistEmailException("이미 가입된 이메일 입니다.");
+        if(existent){
+            throw new ExistEmailException("This email has already been registered.");
         }
 
         Member member = Member.builder()
@@ -57,14 +62,20 @@ public class MemberService {
 
     }
 
-    public LoginResponse login(LoginRequest loginRequest){
+    public LoginResponse login(LoginRequest loginRequest, HttpServletResponse response){
         Member member = findByEmail(loginRequest.getEmail());
 
-        if(isMissMatch(loginRequest, member)){
-            throw new LoginFailException("아이디 혹은 비밀번호가 틀렸습니다.");
-        }
+        isMissMatch(loginRequest.getPassword(), member.getPassword());
 
-        String token = jwtService.makeToken(member);
+
+        String token = jwtService.makeAccessToken(member);
+
+
+        Cookie cookie = jwtService.setRefreshTokenInCookie(member.getId().toString());
+
+        response.addCookie(cookie);
+
+
         return new LoginResponse(token);
 
     }
@@ -88,10 +99,7 @@ public class MemberService {
     public void editPass(TokenInfo tokenInfo, EditPassRequest editPassRequest){
         Member member = findByEmail(tokenInfo.getEmail());
 
-        if(!passwordEncoder.matches(editPassRequest.getPassword(), member.getPassword())){
-            throw new LoginFailException("이메일 혹은 비밀번호가 틀렸습니다.");
-            // 이후 수정 필요
-        }
+        isMissMatch(editPassRequest.getPassword(), member.getPassword());
 
         member.editPass(passwordEncoder.encode(editPassRequest.getNewPassword()));
         memberRepository.save(member);
@@ -100,13 +108,22 @@ public class MemberService {
 
     public Member findByEmail(String email){
        return memberRepository.findByEmail(email).
-               orElseThrow(() -> new LoginFailException("이메일 혹은 비밀번호가 틀렸습니다."));
+               orElseThrow(() -> new LoginFailException("The ID or password is incorrect."));
+    }
+
+    public Member findById(UUID id) {
+        return memberRepository
+                .findById(id)
+                .orElseThrow( ()->new IncorrectContactException("wrong approach"));
+    }
+
+    private void isMissMatch(String inputPassword, String savedPassword) {
+         if(!passwordEncoder.matches(inputPassword, savedPassword)) {
+             throw new LoginFailException("The ID or password is incorrect.");
+         }
     }
 
 
-    private boolean isMissMatch(LoginRequest loginRequest, Member member) {
-        return !passwordEncoder.matches(loginRequest.getPassword(), member.getPassword());
-    }
 
 
 }

@@ -28,7 +28,7 @@ public class ApplicationConfig {
                 = new DaoAuthenticationProvider();
 
         authenticationProvider.setPasswordEncoder(passwordEncoder());
-        authenticationProvider.setUserDetailsService(jwtService::parseToken);
+        authenticationProvider.setUserDetailsService(jwtService::parseAccessToken);
 
         return authenticationProvider;
     }

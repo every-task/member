@@ -1,6 +1,5 @@
 package com.playdata.firebase.controller;
 
-import com.google.firebase.auth.FirebaseAuthException;
 import com.playdata.config.TokenInfo;
 import com.playdata.firebase.service.FirebaseService;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/v1/firebase")
+@RequestMapping("api/v1/auth/firebase")
 public class FirebaseController {
 
     private final FirebaseService firebaseService;

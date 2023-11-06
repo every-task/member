@@ -1,6 +1,7 @@
 package com.playdata.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -14,12 +15,14 @@ public class ApplicationConfig {
 
     private final JwtService jwtService;
 
-    private int strength = 10;
-    // 이것도 환경설정으로 보내버려야함.
+    @Value("${config.password.strength}")
+    private final int STRENGTH;
+
+
 
     @Bean
     public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder(strength);
+        return new BCryptPasswordEncoder(STRENGTH);
     }
 
     @Bean

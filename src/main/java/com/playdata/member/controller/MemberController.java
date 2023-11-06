@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/v1/member")
+@RequestMapping("api/v1/auth/member")
 public class MemberController {
 
     private final MemberService memberService;
@@ -46,6 +46,7 @@ public class MemberController {
     @ResponseStatus(HttpStatus.OK)
     public void editInfo(@AuthenticationPrincipal TokenInfo tokenInfo,
                          @RequestBody EditInfoRequest editInfoRequest) {
+
          memberService.editInfo(tokenInfo, editInfoRequest);
     }
     @PutMapping("/me/password")

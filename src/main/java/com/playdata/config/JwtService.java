@@ -6,6 +6,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.Cookie;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -16,7 +17,8 @@ import java.util.UUID;
 @Service
 public class JwtService {
 
-    private final String secretKey = "anfoawhfafawkefhbwkjlfeopwehfolawefh";
+    @Value("${config.jwt.secret}")
+    private String secretKey;
     // 이 키는 다른곳으로 옮겨야한다.
 
 

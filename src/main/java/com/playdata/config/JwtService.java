@@ -24,6 +24,11 @@ public class JwtService {
     @Value("${config.cookie.domain}")
     private String domain;
 
+    public static int TWO_WEEK = 86400 * 30* 6;
+
+    private static long THIRTY_MINUTE = 1000L * 3600;
+    private static long THREE_WEEK = 1000L * 3600 * 24 * 14;
+
 
     public String makeAccessToken(Member member){
         Map<String, Object> claims = new HashMap<>();
@@ -38,7 +43,7 @@ public class JwtService {
                 .setClaims(claims)
                 .setExpiration(new Date(
                         System.currentTimeMillis()
-                        + + (1000L * 60 * 60 * 2) // 2시간
+                        + (THIRTY_MINUTE)
                 ))
                 .signWith(SignatureAlgorithm.HS256,secretKey.getBytes())
                 .compact();
@@ -74,7 +79,7 @@ public class JwtService {
                 .setClaims(claims)
                 .setExpiration(new Date(
                         System.currentTimeMillis()
-                                + + (1000L * 60 * 60 * 24 * 30) // 3일?
+                                + (THREE_WEEK)
                 ))
                 .signWith(SignatureAlgorithm.HS256,secretKey.getBytes())
                 .compact();
@@ -82,17 +87,20 @@ public class JwtService {
         return refreshToken;
 
     }
-    public Cookie makeCookie(String refreshToken) {
+    public Cookie makeRefreshCookie(String refreshToken) {
         Cookie cookie = new Cookie("refreshToken", refreshToken);
-        cookie.setDomain(domain);
-        cookie.setHttpOnly(true);
-        cookie.setPath("/");
+
+        Cookie refreshCookie = defaultCookieSetting(cookie);
+
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setMaxAge(TWO_WEEK);
         return cookie;
     }
 
+
     public Cookie setRefreshTokenInCookie(String uuid){
         String refreshToken = makeRefreshToken(uuid);
-        return makeCookie(refreshToken);
+        return makeRefreshCookie(refreshToken);
 
     }
 
@@ -107,5 +115,11 @@ public class JwtService {
                 .nickname(body.get("nickname", String.class))
                 .profileImageUrl(body.get("profileImageUrl", String.class))
                 .build();
+    }
+
+    private Cookie defaultCookieSetting(Cookie cookie) {
+        cookie.setDomain(domain);
+        cookie.setPath("/");
+        return cookie;
     }
 }

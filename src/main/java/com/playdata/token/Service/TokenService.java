@@ -20,12 +20,8 @@ public class TokenService {
     private final JwtService jwtService;
     private final MemberService memberService;
 
-    private final int sixMonth = 15552000;
-
-
     public LoginResponse republish(String refreshToken,
                                    TokenInfo tokenInfo,
-                                   String remember,
                                    HttpServletResponse response) {
 
         UUID id = jwtService.parseRefreshToken(refreshToken);
@@ -36,7 +32,7 @@ public class TokenService {
 
         String token = jwtService.makeAccessToken(member);
 
-        addCookies(remember, response, member);
+        addCookies( response, id);
 
         return new LoginResponse(token);
     }
@@ -51,6 +47,8 @@ public class TokenService {
 
         String token = jwtService.makeAccessToken(member);
 
+        addCookies(response,id);
+
         return new LoginResponse(token);
     }
 
@@ -60,17 +58,10 @@ public class TokenService {
         }
     }
 
-    private void addCookies(String remember, HttpServletResponse response, Member member) {
-        Cookie cookie = jwtService.setRefreshTokenInCookie(member.getId().toString());
+    private void addCookies(HttpServletResponse response, UUID id) {
+        Cookie refreshCookie = jwtService.setRefreshTokenInCookie(id.toString());
 
-        if(remember.equals("true")){
-            cookie.setMaxAge(sixMonth);
-            cookie.setAttribute("remember","true");
-        }else {
-            cookie.setAttribute("remember","false");
-        }
-
-        response.addCookie(cookie);
+        response.addCookie(refreshCookie);
     }
 
 

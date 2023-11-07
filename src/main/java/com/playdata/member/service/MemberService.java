@@ -126,15 +126,10 @@ public class MemberService {
     }
 
     private void addCookies(LoginRequest loginRequest, HttpServletResponse response, Member member) {
-        Cookie cookie = jwtService.setRefreshTokenInCookie(member.getId().toString());
+        Cookie refreshCookie = jwtService.setRefreshTokenInCookie(member.getId().toString());
 
-        if(loginRequest.isRemember()){
-            cookie.setMaxAge(sixMonth);
-            cookie.setAttribute("remember","true");
-        }else {
-            cookie.setAttribute("remember","false");
-        }
-        response.addCookie(cookie);
+        response.addCookie(refreshCookie);
+
     }
 
 

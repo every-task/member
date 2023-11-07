@@ -16,7 +16,7 @@ public class ApplicationConfig {
     private final JwtService jwtService;
 
     @Value("${config.password.strength}")
-    private final int STRENGTH;
+    private int STRENGTH;
 
 
 

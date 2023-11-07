@@ -54,9 +54,9 @@ public class SecurityConfig {
 
         security.authorizeHttpRequests(req ->
                 req.requestMatchers(
-                                AntPathRequestMatcher.antMatcher("/api/v1/member/login")
-                                , AntPathRequestMatcher.antMatcher("/api/v1/member/signup")
-                        ,   AntPathRequestMatcher.antMatcher("/api/v1/token/welcome")
+                                AntPathRequestMatcher.antMatcher("/api/v1/auth/member/login")
+                                , AntPathRequestMatcher.antMatcher("/api/v1/auth/member/signup")
+                        ,   AntPathRequestMatcher.antMatcher("/api/v1/auth/token/welcome")
                         )
                         .permitAll()
                         .anyRequest().authenticated()

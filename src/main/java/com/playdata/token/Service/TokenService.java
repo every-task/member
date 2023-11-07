@@ -20,42 +20,59 @@ public class TokenService {
     private final JwtService jwtService;
     private final MemberService memberService;
 
+    private final int sixMonth = 15552000;
+
 
     public LoginResponse republish(String refreshToken,
                                    TokenInfo tokenInfo,
+                                   String remember,
                                    HttpServletResponse response) {
 
         UUID id = jwtService.parseRefreshToken(refreshToken);
 
-        if(checkApproach(refreshToken, tokenInfo, id)) {
-            throw new IncorrectContactException("wrong approach");
-        }
+        checkApproach(refreshToken, tokenInfo, id);
 
-        String token = makeTokenAndSetCookie(id, response);
+        Member member = memberService.findById(id);
+
+        String token = jwtService.makeAccessToken(member);
+
+        addCookies(remember, response, member);
 
         return new LoginResponse(token);
     }
+
+
 
     public LoginResponse seeYouAgain(String refreshToken,HttpServletResponse response) {
 
         UUID id = jwtService.parseRefreshToken(refreshToken);
 
-        String token = makeTokenAndSetCookie(id, response);
-
-        return new LoginResponse(token);
-    }
-
-    private String makeTokenAndSetCookie(UUID id, HttpServletResponse response) {
         Member member = memberService.findById(id);
 
         String token = jwtService.makeAccessToken(member);
 
+        return new LoginResponse(token);
+    }
+
+    private void checkApproach(String refreshToken, TokenInfo tokenInfo, UUID id) {
+        if(refreshToken.equals("none") || !(id.equals(tokenInfo.getId()))) {
+            throw new IncorrectContactException("wrong approach");
+        }
+    }
+
+    private void addCookies(String remember, HttpServletResponse response, Member member) {
         Cookie cookie = jwtService.setRefreshTokenInCookie(member.getId().toString());
 
+        if(remember.equals("true")){
+            cookie.setMaxAge(sixMonth);
+            cookie.setAttribute("remember","true");
+        }else {
+            cookie.setAttribute("remember","false");
+        }
+
         response.addCookie(cookie);
-        return token;
     }
-    private boolean checkApproach(String refreshToken, TokenInfo tokenInfo, UUID uuid) {
-        return refreshToken.equals("none") || !(uuid.equals(tokenInfo.getId()));
-    }
+
+
+
 }

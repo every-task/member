@@ -20,20 +20,19 @@ public class TokenController {
 
     @PostMapping("/refresh")
     public LoginResponse republish(
-            @CookieValue(name = "refreshToken",defaultValue = "none") String refreshToken,
-            @CookieValue(name = "remember") String remember,
+            @CookieValue(name = "refreshToken", required = true) String refreshToken,
             @AuthenticationPrincipal() TokenInfo tokenInfo,
             HttpServletResponse response) {
 
 
-        LoginResponse republish = tokenService.republish(refreshToken, tokenInfo,remember,response);
+        LoginResponse republish = tokenService.republish(refreshToken, tokenInfo,response);
 
         return republish;
     }
 
     @PostMapping("/welcome")
     public LoginResponse seeYouAgain(
-            @CookieValue(name = "refreshToken",defaultValue = "none") String refreshToken,
+            @CookieValue(name = "refreshToken",required = true) String refreshToken,
             HttpServletResponse response
     ) {
 

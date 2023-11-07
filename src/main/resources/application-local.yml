@@ -11,6 +11,8 @@ config:
     service-key: serviceAccountKey.json
   jwt:
     secret: anfoawhfafawkefhbwkjlfeopwehfolawefh
+  cookie:
+    domain: localhost
 
 
 spring:

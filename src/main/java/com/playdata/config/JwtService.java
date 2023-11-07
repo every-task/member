@@ -21,6 +21,9 @@ public class JwtService {
     private String secretKey;
     // 이 키는 다른곳으로 옮겨야한다.
 
+    @Value("${config.cookie.domain}")
+    private String domain;
+
 
     public String makeAccessToken(Member member){
         Map<String, Object> claims = new HashMap<>();
@@ -81,11 +84,9 @@ public class JwtService {
     }
     public Cookie makeCookie(String refreshToken) {
         Cookie cookie = new Cookie("refreshToken", refreshToken);
-        cookie.setDomain("104.154.101.83"); // 이건 나중에 다시 세팅할것
+        cookie.setDomain(domain);
         cookie.setHttpOnly(true);
-        // cookie.setSecure(true); // 이건 나중에 https에서 사용가능함
         cookie.setPath("/");
-        cookie.setMaxAge(1000 * 60 * 60 * 24);
         return cookie;
     }
 

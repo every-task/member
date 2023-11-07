@@ -33,6 +33,8 @@ public class MemberService {
     private final JwtService jwtService;
     private final TopicCommandProducer topicCommandProducer;
 
+    private final int sixMonth = 15552000;
+
 
 
     @Transactional
@@ -71,14 +73,14 @@ public class MemberService {
         String token = jwtService.makeAccessToken(member);
 
 
-        Cookie cookie = jwtService.setRefreshTokenInCookie(member.getId().toString());
-
-        response.addCookie(cookie);
+        addCookies(loginRequest, response, member);
 
 
         return new LoginResponse(token);
 
     }
+
+
 
     public InfoResponse getInfo(TokenInfo tokenInfo){
 
@@ -121,6 +123,18 @@ public class MemberService {
          if(!passwordEncoder.matches(inputPassword, savedPassword)) {
              throw new LoginFailException("The ID or password is incorrect.");
          }
+    }
+
+    private void addCookies(LoginRequest loginRequest, HttpServletResponse response, Member member) {
+        Cookie cookie = jwtService.setRefreshTokenInCookie(member.getId().toString());
+
+        if(loginRequest.isRemember()){
+            cookie.setMaxAge(sixMonth);
+            cookie.setAttribute("remember","true");
+        }else {
+            cookie.setAttribute("remember","false");
+        }
+        response.addCookie(cookie);
     }
 
 

@@ -21,11 +21,12 @@ public class TokenController {
     @PostMapping("/refresh")
     public LoginResponse republish(
             @CookieValue(name = "refreshToken",defaultValue = "none") String refreshToken,
+            @CookieValue(name = "remember") String remember,
             @AuthenticationPrincipal() TokenInfo tokenInfo,
             HttpServletResponse response) {
 
 
-        LoginResponse republish = tokenService.republish(refreshToken, tokenInfo,response);
+        LoginResponse republish = tokenService.republish(refreshToken, tokenInfo,remember,response);
 
         return republish;
     }
@@ -36,8 +37,7 @@ public class TokenController {
             HttpServletResponse response
     ) {
 
-
-        LoginResponse loginResponse = tokenService.seeYouAgain(refreshToken, response);
+        LoginResponse loginResponse = tokenService.seeYouAgain(refreshToken ,response);
 
         return loginResponse;
     }

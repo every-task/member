@@ -19,15 +19,14 @@ public class JwtService {
 
     @Value("${config.jwt.secret}")
     private String secretKey;
-    // 이 키는 다른곳으로 옮겨야한다.
 
     @Value("${config.cookie.domain}")
     private String domain;
 
-    public static int TWO_WEEK = 86400 * 30* 6;
+    public final static int TWO_WEEK = 1 * 60 * 60 * 24 * 14;
 
-    private static long THIRTY_MINUTE = 1000L * 3600;
-    private static long THREE_WEEK = 1000L * 3600 * 24 * 14;
+    private final static long TEN_MINUTE = 1000L * 60 * 10;
+    private final static long THREE_WEEK = 1000L * 3600 * 24 * 14;
 
 
     public String makeAccessToken(Member member){
@@ -43,7 +42,7 @@ public class JwtService {
                 .setClaims(claims)
                 .setExpiration(new Date(
                         System.currentTimeMillis()
-                        + (THIRTY_MINUTE)
+                        + (TEN_MINUTE)
                 ))
                 .signWith(SignatureAlgorithm.HS256,secretKey.getBytes())
                 .compact();
@@ -95,6 +94,14 @@ public class JwtService {
         refreshCookie.setHttpOnly(true);
         refreshCookie.setMaxAge(TWO_WEEK);
         return cookie;
+    }
+    public Cookie deleteRefreshCookie(){
+        Cookie cookie = new Cookie("refreshToken", null);
+
+        Cookie refreshCookie = defaultCookieSetting(cookie);
+        refreshCookie.setHttpOnly(true);
+        refreshCookie.setMaxAge(0);
+        return refreshCookie;
     }
 
 

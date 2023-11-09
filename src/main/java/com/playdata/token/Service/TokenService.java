@@ -52,6 +52,15 @@ public class TokenService {
         return new LoginResponse(token);
     }
 
+    public String goodBye(HttpServletResponse response){
+
+        Cookie cookie = jwtService.deleteRefreshCookie();
+        response.addCookie(cookie);
+
+
+        return "OK";
+    }
+
     private void checkApproach(String refreshToken, TokenInfo tokenInfo, UUID id) {
         if(refreshToken.equals("none") || !(id.equals(tokenInfo.getId()))) {
             throw new IncorrectContactException("wrong approach");

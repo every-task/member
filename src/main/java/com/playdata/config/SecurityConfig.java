@@ -57,6 +57,7 @@ public class SecurityConfig {
                                 AntPathRequestMatcher.antMatcher("/api/v1/auth/member/login")
                                 , AntPathRequestMatcher.antMatcher("/api/v1/auth/member/signup")
                         ,   AntPathRequestMatcher.antMatcher("/api/v1/auth/token/welcome")
+                        , AntPathRequestMatcher.antMatcher("/api/v1/auth/token/logout")
                         )
                         .permitAll()
                         .anyRequest().authenticated()

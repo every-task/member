@@ -16,7 +16,7 @@ jobs:
     - name: Permission
       run: chmod 744 gradlew
       
-    - name : test
+    - name : java build
       run: ./gradlew clean build
       
     - name: Docker Login

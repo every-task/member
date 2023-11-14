@@ -33,10 +33,6 @@ public class MemberService {
     private final JwtService jwtService;
     private final TopicCommandProducer topicCommandProducer;
 
-    private final int sixMonth = 15552000;
-
-
-
     @Transactional
     public void signup(SignupRequest signupRequest){
         boolean existent = memberRepository.findByEmail(signupRequest.getEmail()).isPresent();
@@ -73,10 +69,10 @@ public class MemberService {
         String token = jwtService.makeAccessToken(member);
 
 
-        addCookies(loginRequest, response, member);
+        addCookies( response, member);
 
 
-        return new LoginResponse(token);
+        return new LoginResponse(token, member.getProfileImageUrl());
 
     }
 
@@ -89,11 +85,19 @@ public class MemberService {
 
     @Transactional
     public void editInfo(TokenInfo tokenInfo, EditInfoRequest editInfoRequest){
-        Member member = findByEmail(tokenInfo.getEmail());
+        Member member = findById(tokenInfo.getId());
 
         member.edit(editInfoRequest);
 
         memberRepository.save(member);
+
+        MemberKafka memberKafka = MemberKafka.builder()
+                .id(member.getId())
+                .profileImageUrl(member.getProfileImageUrl())
+                .nickname(member.getNickname())
+                .build();
+
+        topicCommandProducer.sendMember(memberKafka);
 
     }
 
@@ -125,7 +129,7 @@ public class MemberService {
          }
     }
 
-    private void addCookies(LoginRequest loginRequest, HttpServletResponse response, Member member) {
+    private void addCookies( HttpServletResponse response, Member member) {
         Cookie refreshCookie = jwtService.setRefreshTokenInCookie(member.getId().toString());
 
         response.addCookie(refreshCookie);

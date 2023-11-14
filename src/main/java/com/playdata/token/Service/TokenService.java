@@ -34,7 +34,7 @@ public class TokenService {
 
         addCookies( response, id);
 
-        return new LoginResponse(token);
+        return new LoginResponse(token,member.getProfileImageUrl());
     }
 
 
@@ -49,7 +49,7 @@ public class TokenService {
 
         addCookies(response,id);
 
-        return new LoginResponse(token);
+        return new LoginResponse(token,member.getProfileImageUrl());
     }
 
     public String goodBye(HttpServletResponse response){

@@ -42,7 +42,7 @@ public class SecurityConfig {
 
         security.cors(corsCustomizer -> corsCustomizer.configurationSource(request -> {
             CorsConfiguration config = new CorsConfiguration();
-            config.setAllowedOrigins(Collections.singletonList(origin)); // yml로 빼야함
+            config.setAllowedOrigins(Collections.singletonList(origin));
             config.setAllowedMethods(Collections.singletonList("*"));
             config.setAllowCredentials(true);
             config.setAllowedHeaders(Collections.singletonList("*"));

@@ -25,7 +25,7 @@ public class TokenController {
             HttpServletResponse response) {
 
         if (refreshToken.equals("none")){
-            return new LoginResponse(null);
+            return new LoginResponse(null,null);
         }
 
         LoginResponse republish = tokenService.republish(refreshToken, tokenInfo,response);
@@ -39,7 +39,7 @@ public class TokenController {
             HttpServletResponse response) {
 
         if (refreshToken.equals("none")){
-            return new LoginResponse(null);
+            return new LoginResponse(null,null);
         }
 
         LoginResponse loginResponse = tokenService.seeYouAgain(refreshToken ,response);

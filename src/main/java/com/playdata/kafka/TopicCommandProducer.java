@@ -19,8 +19,8 @@ public class TopicCommandProducer {
         CompletableFuture<SendResult<String, MemberKafka>> future = template.send("member", member);
 
 
-        if(future.isCompletedExceptionally() || future.isCancelled()){
-            throw new KafkaCommandException("발행 실패");
+        if(future.isCompletedExceptionally()){
+            throw new KafkaCommandException("Publication failed ={%s}".formatted(member.getId().toString()));
         }
 
 

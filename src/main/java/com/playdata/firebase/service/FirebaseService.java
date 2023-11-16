@@ -18,7 +18,7 @@ public class FirebaseService {
         try {
             return FirebaseAuth.getInstance().createCustomToken(id);
         }catch (FirebaseAuthException e){
-            throw new FirebaseException(" error - 연결이 불안정합니다. ",e);
+            throw new FirebaseException("Not authenticated.",e);
         }
 
 

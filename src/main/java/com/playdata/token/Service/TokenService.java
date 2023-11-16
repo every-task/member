@@ -63,7 +63,7 @@ public class TokenService {
 
     private void checkApproach(String refreshToken, TokenInfo tokenInfo, UUID id) {
         if(refreshToken.equals("none") || !(id.equals(tokenInfo.getId()))) {
-            throw new IncorrectContactException("wrong approach");
+            throw new IncorrectContactException("wrong approach",tokenInfo.getId().toString());
         }
     }
 

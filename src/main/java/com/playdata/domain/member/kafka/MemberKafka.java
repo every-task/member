@@ -11,4 +11,5 @@ public class MemberKafka {
     private UUID id;
     private String nickname;
     private String profileImageUrl;
+    private Action action;
 }

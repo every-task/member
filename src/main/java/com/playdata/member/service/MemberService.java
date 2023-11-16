@@ -10,6 +10,7 @@ import com.playdata.domain.member.entity.Member;
 import com.playdata.domain.member.exception.ExistEmailException;
 import com.playdata.domain.member.exception.IncorrectContactException;
 import com.playdata.domain.member.exception.LoginFailException;
+import com.playdata.domain.member.kafka.Action;
 import com.playdata.domain.member.kafka.MemberKafka;
 import com.playdata.domain.member.repository.MemberRepository;
 import com.playdata.domain.member.response.InfoResponse;
@@ -38,7 +39,7 @@ public class MemberService {
         boolean existent = memberRepository.findByEmail(signupRequest.getEmail()).isPresent();
 
         if(existent){
-            throw new ExistEmailException("This email has already been registered.");
+            throw new ExistEmailException("This email has already been registered= {%s}".formatted(signupRequest.getEmail()));
         }
 
         Member member = Member.builder()
@@ -54,6 +55,7 @@ public class MemberService {
                 .id(member.getId())
                 .profileImageUrl(member.getProfileImageUrl())
                 .nickname(member.getNickname())
+                .action(Action.CREATE)
                 .build();
 
         topicCommandProducer.sendMember(memberKafka);
@@ -95,6 +97,7 @@ public class MemberService {
                 .id(member.getId())
                 .profileImageUrl(member.getProfileImageUrl())
                 .nickname(member.getNickname())
+                .action(Action.EDIT)
                 .build();
 
         topicCommandProducer.sendMember(memberKafka);
@@ -112,6 +115,22 @@ public class MemberService {
 
     }
 
+    @Transactional
+    public void withdraw(TokenInfo tokenInfo){
+        Member member = findById(tokenInfo.getId());
+
+        member.delete();
+
+        memberRepository.save(member);
+
+        MemberKafka memberKafka = MemberKafka.builder()
+                .id(member.getId())
+                .profileImageUrl(member.getProfileImageUrl())
+                .nickname(member.getNickname())
+                .action(Action.DELETE)
+                .build();
+    }
+
     public Member findByEmail(String email){
        return memberRepository.findByEmail(email).
                orElseThrow(() -> new LoginFailException("The ID or password is incorrect."));
@@ -120,12 +139,12 @@ public class MemberService {
     public Member findById(UUID id) {
         return memberRepository
                 .findById(id)
-                .orElseThrow( ()->new IncorrectContactException("wrong approach"));
+                .orElseThrow( ()->new IncorrectContactException("wrong approach",id.toString()));
     }
 
     private void isMissMatch(String inputPassword, String savedPassword) {
          if(!passwordEncoder.matches(inputPassword, savedPassword)) {
-             throw new LoginFailException("The ID or password is incorrect.");
+             throw new LoginFailException("The ID or password is incorrect. ");
          }
     }
 

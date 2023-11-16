@@ -1,5 +1,6 @@
 package com.playdata.domain.member.Request;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -8,9 +9,11 @@ import lombok.NoArgsConstructor;
 
 public class SignupRequest {
 
-
+    @NotBlank
     private String email;
+    @NotBlank
     private String password;
+    @NotBlank
     private String nickname;
     private String profileImageUrl;
 

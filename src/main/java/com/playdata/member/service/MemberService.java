@@ -97,7 +97,7 @@ public class MemberService {
                 .id(member.getId())
                 .profileImageUrl(member.getProfileImageUrl())
                 .nickname(member.getNickname())
-                .action(Action.EDIT)
+                .action(Action.UPDATE)
                 .build();
 
         topicCommandProducer.sendMember(memberKafka);

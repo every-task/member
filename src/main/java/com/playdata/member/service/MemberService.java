@@ -139,7 +139,7 @@ public class MemberService {
     public Member findById(UUID id) {
         return memberRepository
                 .findById(id)
-                .orElseThrow( ()->new IncorrectContactException("wrong approach",id.toString()));
+                .orElseThrow( ()->new IncorrectContactException("wrong approach= {%s}".formatted(id.toString())));
     }
 
     private void isMissMatch(String inputPassword, String savedPassword) {

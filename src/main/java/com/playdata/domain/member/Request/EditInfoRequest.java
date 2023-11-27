@@ -6,10 +6,11 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
+
 public class EditInfoRequest {
-    @NotBlank
+    @NotBlank(message = "Blank is not allowed")
     private String nickname;
-    @NotBlank
+    @NotBlank(message = "Blank is not allowed")
     private String profileImageUrl;
 
 }

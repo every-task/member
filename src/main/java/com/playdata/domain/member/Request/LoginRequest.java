@@ -6,9 +6,10 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
+
 public class LoginRequest {
-    @NotBlank
+    @NotBlank(message = "Blank is not allowed")
     private String email;
-    @NotBlank
+    @NotBlank(message = "Blank is not allowed")
     private String password;
 }

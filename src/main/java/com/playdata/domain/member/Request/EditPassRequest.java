@@ -7,10 +7,11 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
+
 public class EditPassRequest {
-    @NotBlank
+    @NotBlank(message = "Blank is not allowed")
     private String password;
-    @NotBlank
+    @NotBlank(message = "Blank is not allowed")
     private String newPassword;
 
 }

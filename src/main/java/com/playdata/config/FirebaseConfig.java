@@ -9,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 import javax.annotation.PostConstruct;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 @Configuration
 public class FirebaseConfig {
@@ -23,9 +22,6 @@ public class FirebaseConfig {
 
         FileInputStream serviceAccount =
                 new FileInputStream(jsonPath); // 이것도 변수처리 필요함
-
-
-
 
         FirebaseOptions options = new FirebaseOptions.Builder()
                 .setCredentials(GoogleCredentials.fromStream(serviceAccount))
